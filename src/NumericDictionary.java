@@ -4,6 +4,6 @@ public class NumericDictionary extends AbstractDictionary {
     }
 
     protected boolean isValidKey(String key) {
-        return key.length() == 5 && key.matches("^[0-9]+$]");
+        return key.matches("[0-9]{5}+");
     }
 }

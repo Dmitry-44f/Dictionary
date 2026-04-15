@@ -5,6 +5,6 @@ public class LatinDictionary extends AbstractDictionary {
 
     @Override
     protected boolean isValidKey(String key) {
-        return key.length() == 4 && key.matches("^[a-zA-Z]+$");
+        return key.matches("[a-zA-Z]{4}+");
     }
 }

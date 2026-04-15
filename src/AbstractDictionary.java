@@ -1,29 +1,26 @@
 import java.io.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 abstract class AbstractDictionary implements DictionaryService {
     protected final String filePath;
     protected Map<String, String> data = new HashMap<>();
 
-    public AbstractDictionary(String filePath) throws Exception {
-        File file = new File(filePath);
-        if (!file.exists()) {
-            throw new FileNotFoundException("Не найден файл: " + filePath);
-        }
+    protected List<String> invalidLines = new ArrayList<>(); // для пар не подходящих выбранному словарю
 
+    public AbstractDictionary(String filePath) {
         this.filePath = filePath;
-
+        loadFromFile();
     }
 
     protected abstract boolean isValidKey(String key);
 
-    private void loadFromFile(String filePath) {
+    private void loadFromFile() {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
 
             while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue; // пустая строка
+
                 String[] parts = line.split("-");
 
                 if (parts.length == 2) {
@@ -32,7 +29,11 @@ abstract class AbstractDictionary implements DictionaryService {
 
                     if (isValidKey(key)) {
                         data.put(key, value);
+                    } else {
+                        invalidLines.add(line);
                     }
+                } else {
+                    invalidLines.add(line);
                 }
             }
         } catch (Exception e) {
@@ -45,6 +46,12 @@ abstract class AbstractDictionary implements DictionaryService {
             for (Map.Entry<String, String> entry: data.entrySet()) {
                 String line = entry.getKey() + " - " + entry.getValue();
                 bw.write(line);
+                bw.newLine();
+            }
+
+            // добавляем не подходящие выбранному словарю записи
+            for  (String invL: invalidLines) {
+                bw.write(invL);
                 bw.newLine();
             }
         } catch (Exception e) {
@@ -63,10 +70,12 @@ abstract class AbstractDictionary implements DictionaryService {
     }
 
     @Override
-    public void remove(String key) {
+    public boolean remove(String key) {
         if (data.remove(key) != null) {
             saveToFile();
+            return true;
         }
+        return false;
     }
 
     @Override
