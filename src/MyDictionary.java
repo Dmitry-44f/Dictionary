@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -9,11 +10,10 @@ public class MyDictionary {
     public void start() {
         System.out.println("Консольный словарь");
 
-        String filePath = forFilePath();
-
         boolean running = true;
         while (running) {
             try {
+                String filePath = forFilePath();
                 initDictionary(filePath);
             } catch (Exception e) {
                 System.out.println("Ошибка: " + e.getMessage());
@@ -23,7 +23,7 @@ public class MyDictionary {
             boolean runningMenu = true;
             while (runningMenu) {
                 try {
-                    System.out.println("\n1. Посмотреть содержимое");
+                    System.out.println("1. Посмотреть содержимое");
                     System.out.println("2. Найти запись по ключу");
                     System.out.println("3. Добавить запись");
                     System.out.println("4. Удалить запись по ключу");
@@ -61,8 +61,8 @@ public class MyDictionary {
         while (true) {
             System.out.println("Введите путь к файлу: ");
             String path = sc.nextLine();
-            File file = new File(path);
 
+            File file = new File(path);
             if (file.exists() && file.isFile()) {
                 return path;
             } else {
@@ -71,10 +71,11 @@ public class MyDictionary {
         }
     }
 
-    private void initDictionary(String filePath) throws Exception {
+    private void initDictionary(String filePath) {
         System.out.println("1. Латинский (4 буквы)");
         System.out.println("2. Цифровой (5 цифр)");
-        System.out.println("Выберите словарь:");
+        System.out.println("Выберите тип словарь:");
+
         String type = sc.nextLine();
 
         if (type.equals("1")) {
@@ -82,43 +83,50 @@ public class MyDictionary {
         } else if (type.equals("2")) {
             currentDictionary = new NumericDictionary(filePath);
         } else {
-            throw new Exception("Несуществующий тип словаря!");
+            throw new IllegalArgumentException("Несуществующий тип словаря!");
         }
     }
 
     private void showAll() {
-        for (Map.Entry<String, String> entry: currentDictionary.getAll().entrySet()) {
-            String k = entry.getKey();
-            String v = entry.getValue();
-            System.out.println(k + " - " + v);
+        String all = currentDictionary.getAll();
+        if (all.isEmpty()) {
+            System.out.println("Словарь пуст!");
+        } else {
+            System.out.println("Содержимое словаря:");
+            System.out.println(all);
         }
     }
 
     private void findEntry() {
         System.out.print("Введите ключ: ");
-        String key = sc.nextLine();
-        String value = currentDictionary.find(key);
+        String key = sc.nextLine().trim();
 
-        if (value != null) {
+        try{
+            String value = currentDictionary.find(key);
             System.out.println("Перевод: " + value);
-        } else {
-            System.out.println("Запись не найдена!");
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
         }
     }
 
-    private void addEntry() throws Exception{
+    private void addEntry() {
         System.out.print("Введите ключ: ");
         String key = sc.nextLine();
+
         System.out.print("Введите значение: ");
         String value = sc.nextLine();
 
-        currentDictionary.add(key, value);
-        System.out.println("Запись добавлена!");
+        try {
+            currentDictionary.add(key, value);
+            System.out.println("Запись добавлена!");
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
     }
 
     private void removeEntry() {
         System.out.print("Введтие ключ: ");
-        String key = sc.nextLine();
+        String key = sc.nextLine().trim();
 
         if (currentDictionary.remove(key)) {
             System.out.println("Запись удалена!");
