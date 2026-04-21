@@ -31,7 +31,7 @@ public class MyDictionary {
                     System.out.println("0. Выйти из словаря!");
                     System.out.print("Выберте действие: ");
 
-                    String choice = sc.nextLine();
+                    String choice = sc.nextLine().trim();
 
                     switch (choice) {
                         case "1" -> showAll();
@@ -60,7 +60,7 @@ public class MyDictionary {
     private String forFilePath() {
         while (true) {
             System.out.println("Введите путь к файлу: ");
-            String path = sc.nextLine();
+            String path = sc.nextLine().trim();
 
             File file = new File(path);
             if (file.exists() && file.isFile()) {
@@ -111,10 +111,10 @@ public class MyDictionary {
 
     private void addEntry() {
         System.out.print("Введите ключ: ");
-        String key = sc.nextLine();
+        String key = sc.nextLine().trim();
 
         System.out.print("Введите значение: ");
-        String value = sc.nextLine();
+        String value = sc.nextLine().trim();
 
         try {
             currentDictionary.add(key, value);
@@ -125,13 +125,18 @@ public class MyDictionary {
     }
 
     private void removeEntry() {
-        System.out.print("Введтие ключ: ");
+        System.out.print("Введите ключ: ");
         String key = sc.nextLine().trim();
 
-        if (currentDictionary.remove(key)) {
-            System.out.println("Запись удалена!");
-        } else {
-            System.out.println("Ошибка: запись не найдена!");
+        try{
+            if (currentDictionary.remove(key)) {
+                System.out.println("Запись удалена!");
+            } else {
+                System.out.println("Ошибка: запись не найдена!");
+            }
+        } catch (Exception e) {
+            System.out.println("Ошибка:" + e.getMessage());
         }
+
     }
 }

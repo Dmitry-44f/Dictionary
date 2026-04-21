@@ -26,30 +26,30 @@ abstract class AbstractDictionary implements DictionaryService {
     }
 
     @Override
-    public String find(String key) throws Exception {
+    public String find(String key) {
         if (!isValidKey(key)) {
-            throw new Exception("Ключ не соотвествует выбранному словарю!");
+            throw new IllegalArgumentException("Ключ не соотвествует выбранному словарю!");
         }
 
         String value = repository.getValue(key);
         if (value == null) {
-            throw new Exception("Запись с данным ключок не найдена!");
+            throw new IllegalArgumentException("Запись с данным ключом не найдена!");
         }
         return value;
     }
 
     @Override
     public boolean remove(String key) {
-        if (isValidKey(key)) {
-            return repository.removeEntry(key);
+        if (!isValidKey(key)) {
+            throw new IllegalArgumentException("Ключ не соответствует требованиям словаря!");
         }
-        return false;
+        return repository.removeEntry(key);
     }
 
     @Override
-    public void add(String key, String value) throws Exception {
+    public void add(String key, String value) {
         if (!isValidKey(key)) {
-            throw new Exception("Ключ не соответствует требованиям словаря!");
+            throw new IllegalArgumentException("Ключ не соответствует требованиям словаря!");
         }
 
         repository.addEntry(key, value);

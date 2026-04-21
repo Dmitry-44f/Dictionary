@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -19,7 +20,7 @@ public class FileRepository {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split("-");
+                String[] parts = line.split(" - ", 2);
                 if (parts.length == 2) {
                     dictionary.put(parts[0].trim(), parts[1].trim());
                 }
@@ -45,7 +46,7 @@ public class FileRepository {
     }
 
     public Map<String, String> getDictionary() {
-        return dictionary;
+        return Collections.unmodifiableMap(dictionary);
     }
 
     public void addEntry(String key, String value) {
