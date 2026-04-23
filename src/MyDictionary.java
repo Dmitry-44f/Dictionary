@@ -1,6 +1,4 @@
 import java.io.File;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Scanner;
 
 public class MyDictionary {
@@ -62,13 +60,17 @@ public class MyDictionary {
             System.out.println("Введите путь к файлу: ");
             String path = sc.nextLine().trim();
 
-            File file = new File(path);
-            if (file.exists() && file.isFile()) {
+            if (isValidFile(path)) {
                 return path;
             } else {
                 System.out.println("Ошибка: Файл не найден. Попробуйте еще раз.");
             }
         }
+    }
+
+    private boolean isValidFile(String path) {
+        File file = new File(path);
+        return file.exists() && file.isFile();
     }
 
     private void initDictionary(String filePath) {
@@ -101,7 +103,7 @@ public class MyDictionary {
         System.out.print("Введите ключ: ");
         String key = sc.nextLine().trim();
 
-        try{
+        try {
             String value = currentDictionary.find(key);
             System.out.println("Перевод: " + value);
         } catch (Exception e) {
